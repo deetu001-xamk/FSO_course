@@ -22,7 +22,9 @@
         browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
         activate server
         server-->>browser: The JavaScript file
-        deactivate server    
+        deactivate server 
+
+        Note right to browser: Browser starts to execute code that fetches the JSON.   
 
         browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
         activate server
