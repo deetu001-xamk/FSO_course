@@ -32,9 +32,9 @@ const Content = (props) => {
   return (
 
     <>
-    <p>{props.part1} {props.exercises1}</p>
-    <p>{props.part2} {props.exercises2}</p>
-    <p>{props.part3} {props.exercises3}</p>
+    <Part exercises={props.exercises1} part={props.part1}/>
+    <Part exercises={props.exercises2} part={props.part2}/>
+    <Part exercises={props.exercises3} part={props.part3}/>
 
     </>
   )
@@ -51,5 +51,17 @@ const Total = (props) => {
   )
 
 }
+
+const Part = (props) => {
+
+  return (
+
+    <>
+    <p>{props.part} {props.exercises}</p>
+    </>
+  )
+
+}
+
 
 export default App
