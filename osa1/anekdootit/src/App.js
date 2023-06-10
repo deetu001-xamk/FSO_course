@@ -59,6 +59,7 @@ const VoteButton = ({anecdotes, votes, setAnecdotes, selected, highestVotes, set
 
   const handleClick = () => {
     // Olisi varmaan ollu helpompikin ratkaisu tähän, mutta tein sen nyt näin.
+    // Löysin tämän tavan netistä ja toivon että sen käyttö on tässäkin iha sallittavaa.
     setAnecdotes(anecdotes.map(anecdote => {
       if (anecdotes[selected] === anecdote) {
         if (anecdote.vote + 1 > highestVotes.vote) {
