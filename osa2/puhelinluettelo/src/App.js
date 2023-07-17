@@ -1,31 +1,44 @@
 import { useState } from 'react'
 import Persons from './components/Persons'
-import Button from './components/Button'
-import Input from './components/Input'
+import PersonsForm from './components/PersonsForm.js'
+import Filters from './components/Filters'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
-  ]) 
-  const [newName, setNewName] = useState('')
+  
+    const [persons, setPersons] = useState([
+      { name: 'Arto Hellas', number: '040-123456' },
+      { name: 'Ada Lovelace', number: '39-44-5323523' },
+      { name: 'Dan Abramov', number: '12-43-234345' },
+      { name: 'Mary Poppendieck', number: '39-23-6423122' }
+    ])
+    
+    const [showWhere, setShowWhere] = useState('')
+
+    const [newContact, setNewContact] = useState({ name : '', number: ''})
+
+
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          name: <Input newName={newName} setNewName={setNewName}/>
-        </div>
-        <div>
-          <Button 
-                persons={persons} 
-                setPersons={setPersons} 
-                newName={newName}
-                setNewName={setNewName} />
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <Persons persons={persons}/>
+      
+      <Filters  persons={persons}
+                showWhere={showWhere}
+                setShowWhere={setShowWhere}/>
+
+      <h3>Add a new contact</h3>
+      <PersonsForm 
+                    
+                      newContact={newContact}
+                      setNewContact={setNewContact}
+                      persons={persons}
+                      setPersons={setPersons}
+                    
+      />
+
+      <h3>Numbers</h3>
+      <Persons  persons={persons}
+                showWhere={showWhere}/>
     </div>
   )
 
