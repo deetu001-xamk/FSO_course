@@ -1,22 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import PersonsForm from './components/PersonsForm.js'
 import Filters from './components/Filters'
+import axios from 'axios'
 
 const App = () => {
   
-    const [persons, setPersons] = useState([
-      { name: 'Arto Hellas', number: '040-123456' },
-      { name: 'Ada Lovelace', number: '39-44-5323523' },
-      { name: 'Dan Abramov', number: '12-43-234345' },
-      { name: 'Mary Poppendieck', number: '39-23-6423122' }
-    ])
+    const [persons, setPersons] = useState([])
     
     const [showWhere, setShowWhere] = useState('')
 
     const [newContact, setNewContact] = useState({ name : '', number: ''})
 
+    const hook = () => {
+    
+      axios.get('http://localhost:3001/persons').then(response => {
+        console.log("onnistui")
+        setPersons(response.data)
+      })
 
+
+    }
+
+    useEffect(hook, [])
 
   return (
     <div>
