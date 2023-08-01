@@ -3,6 +3,7 @@ import Persons from './components/Persons'
 import PersonsForm from './components/PersonsForm.js'
 import Filters from './components/Filters'
 import axios from 'axios'
+import services from './services/persons'
 
 const App = () => {
   
@@ -12,17 +13,84 @@ const App = () => {
 
     const [newContact, setNewContact] = useState({ name : '', number: ''})
 
-    const hook = () => {
-    
-      axios.get('http://localhost:3001/persons').then(response => {
-        console.log("onnistui")
-        setPersons(response.data)
-      })
+
+    const formHandlerName = (e) => {
+
+      setNewContact({name : e.target.value, number : newContact.number}) 
+      console.log(e.target.value)
+
+  }
+
+    const formHandlerNumber = (e) => {
+
+        setNewContact({name : newContact.name, number : e.target.value}) 
+        console.log(e.target.value)
+
+    }
+
+
+    const formAddButton = (event) => {
+        event.preventDefault()
+        
+        const newObj = {
+            name: newContact.name,
+            number : newContact.number
+
+        }
+
+        const resultName = persons.find(({name}) => name === newContact.name)
+        const resultNumber = persons.find(({number}) => number === newContact.number)
+        const oldName = persons.find((person) => person.number === newContact.number)
+        const oldPerson =  persons.find((person) => person.number === newContact.number || person.name === newContact.name)
+
+
+        if (typeof(resultName) === 'undefined' && typeof(resultNumber) === 'undefined' ) {
+          services
+          .addNew(newContact)
+            .then(() => {
+              setNewContact({name: '', number : ''})
+            })
+
+
+        } else if(typeof(resultName) === 'undefined' && typeof(resultNumber) !== 'undefined' ) {
+            if(window.confirm(`This phonenumber is already in the phonebook under the name ${oldName.name}, do you want to change the name attached to this number to ${newContact.name}`)) {
+              services
+                .update(newContact, oldPerson.id)
+                  .then(() => {setNewContact({name: '', number : ''})})
+            }
+        } else if (typeof(resultName) !== 'undefined' && typeof(resultNumber) === 'undefined') {
+            if(window.confirm(`${newContact.name} is already added to phonebook with a different number, replace the old number with a new one?`)){
+              services
+              .update(newContact, oldPerson.id)
+                .then(() => {setNewContact({name: '', number : ''})})
+            }
+        } else  {
+          alert(`${newContact.name} is alredy added to phonebook.`)
+        }
+
+
 
 
     }
 
-    useEffect(hook, [])
+    const delButton =  (id, name) => {
+
+      if(window.confirm(`Delete ${name}?`)){
+        services.del(id)  
+        
+      }
+
+    }
+
+    
+    useEffect(() => {
+      services
+      .getAll()
+        .then(response => {
+          setPersons(response)
+        })
+
+    }, [delButton, formAddButton])
 
   return (
     <div>
@@ -36,15 +104,16 @@ const App = () => {
       <PersonsForm 
                     
                       newContact={newContact}
-                      setNewContact={setNewContact}
-                      persons={persons}
-                      setPersons={setPersons}
-                    
+                      formHandlerName={formHandlerName}
+                      formHandlerNumber={formHandlerNumber}
+                      formAddButton={formAddButton}
+                      
       />
 
       <h3>Numbers</h3>
       <Persons  persons={persons}
-                showWhere={showWhere}/>
+                showWhere={showWhere}
+                delButton={delButton}/>
     </div>
   )
 

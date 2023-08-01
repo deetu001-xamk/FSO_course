@@ -1,5 +1,5 @@
 
-const Persons = ({persons, showWhere}) => {
+const Persons = ({persons, showWhere, delButton}) => {
 
 
     return (
@@ -8,7 +8,13 @@ const Persons = ({persons, showWhere}) => {
 
             {showWhere === '' 
             
-            ? persons.map(person => <p key={person.name}>{person.name} <b>{person.number}</b></p>)
+            ? persons.map(person => 
+                
+                    <p key={person.name}>{person.name} <b>{person.number} </b>  
+                    <button onClick={() => {delButton(person.id, person.name)}}>Delete</button></p>
+                    
+                
+             )
                 
             
             : persons.map(person => {
@@ -16,7 +22,13 @@ const Persons = ({persons, showWhere}) => {
                 let show = showWhere.toLowerCase()
                 console.log(name.includes(show))
                 if(name.includes(show) || person.number.includes(show)) {
-                    return <p key={person.name}>{person.name} <b>{person.number}</b></p> }
+                    return (
+                    <div>
+                        <p key={person.name}>{person.name} <b>{person.number}</b></p>
+                          
+                        <button onClick={delButton(person.id)}>Delete</button>
+                    
+                    </div> )}
             } )}
 
         
