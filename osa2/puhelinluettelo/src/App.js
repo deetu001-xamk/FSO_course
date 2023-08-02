@@ -4,6 +4,8 @@ import PersonsForm from './components/PersonsForm.js'
 import Filters from './components/Filters'
 import axios from 'axios'
 import services from './services/persons'
+import './index.css'
+import Alert from './components/Alert'
 
 const App = () => {
   
@@ -13,6 +15,9 @@ const App = () => {
 
     const [newContact, setNewContact] = useState({ name : '', number: ''})
 
+    const [showAlert, setShowAlert] = useState(false) 
+
+    const [alertName, setAlertName] = useState('')
 
     const formHandlerName = (e) => {
 
@@ -48,8 +53,12 @@ const App = () => {
           services
           .addNew(newContact)
             .then(() => {
+              setAlertName(newContact.name)
+              alertShow()
               setNewContact({name: '', number : ''})
             })
+
+            
 
 
         } else if(typeof(resultName) === 'undefined' && typeof(resultNumber) !== 'undefined' ) {
@@ -81,7 +90,17 @@ const App = () => {
       }
 
     }
+    const alertTime = 3000
 
+    const alertShow = () => {
+      setShowAlert(true)
+      setTimeout(() => setShowAlert(false),3000)
+    }
+
+
+
+
+   
     
     useEffect(() => {
       services
@@ -109,6 +128,8 @@ const App = () => {
                       formAddButton={formAddButton}
                       
       />
+
+      {showAlert && <Alert alertName={alertName}/>}
 
       <h3>Numbers</h3>
       <Persons  persons={persons}
