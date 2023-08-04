@@ -1,17 +1,15 @@
 
 
 
-const Filters = ({showWhere, setShowWhere}) => {
+const Filters = ({showWhere, filterInputHandler}) => {
 
-    const handleOnChange = (e) => {
-        
-        setShowWhere(e.target.value)
 
-    }
 
     return (
         <div>
-            filter shown with <input placeholder="search..." value={showWhere} onChange={handleOnChange}/>
+            filter shown with <input    placeholder="search..." 
+                                        value={showWhere} 
+                                        onChange={filterInputHandler}/>
         </div>
     )
 

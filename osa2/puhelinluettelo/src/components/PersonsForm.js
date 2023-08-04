@@ -6,7 +6,7 @@ const PersonsForm = ({newContact, formAddButton, formHandlerName, formHandlerNum
 
 
     return (
-
+        
         <form>
             <div>
                 name: <input    placeholder="new name..."

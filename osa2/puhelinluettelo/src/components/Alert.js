@@ -1,6 +1,6 @@
 
 
-const Alert = ({alertName}) => {
+const Alert = ({alertMsg}) => {
 
     const alertStyle = {
         color: 'green',
@@ -9,14 +9,13 @@ const Alert = ({alertName}) => {
         borderStyle: 'solid',
         borderColor: 'green',
         borderRadius: '10px',
-        padding: '15px',
-        maxWidth: '50%'
+        padding: '15px'
 
     }
 
     return (
 
-        <p style={alertStyle}>Added {alertName}</p>
+        <p style={alertStyle}>{alertMsg}</p>
 
     )
 

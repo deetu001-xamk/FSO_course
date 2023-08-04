@@ -14,6 +14,7 @@ const addNew = (newContact) => {
 
 const del =  (id) => {
     const req =  axios.delete(`${baseUrl}/${id}`)
+    return req.then(response => response)
 
 
 }

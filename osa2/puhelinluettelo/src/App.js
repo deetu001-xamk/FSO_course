@@ -6,6 +6,7 @@ import axios from 'axios'
 import services from './services/persons'
 import './index.css'
 import Alert from './components/Alert'
+import Error from './components/Error'
 
 const App = () => {
   
@@ -15,9 +16,9 @@ const App = () => {
 
     const [newContact, setNewContact] = useState({ name : '', number: ''})
 
-    const [showAlert, setShowAlert] = useState(false) 
+    const [alertMsg, setAlert] = useState(null) 
 
-    const [alertName, setAlertName] = useState('')
+    const [errorMsg, setError] = useState(null)
 
     const formHandlerName = (e) => {
 
@@ -33,6 +34,11 @@ const App = () => {
 
     }
 
+    const filterInputHandler = (e) => {
+        
+      setShowWhere(e.target.value)
+
+  }
 
     const formAddButton = (event) => {
         event.preventDefault()
@@ -50,13 +56,24 @@ const App = () => {
 
 
         if (typeof(resultName) === 'undefined' && typeof(resultNumber) === 'undefined' ) {
+          if(newContact.name === '' || newContact.number === '') {
+            setError(`Missing name or number, please fill the information and try again.`)
+            setTimeout(() => {
+              setError(null)
+            }, 4000)
+          }else {
           services
           .addNew(newContact)
-            .then(() => {
-              setAlertName(newContact.name)
-              alertShow()
+            .then((response) => {
+              setPersons(persons.concat(response))
+              setAlert(`Added ${newContact.name}.`)
+              setTimeout(() => {
+                setAlert(null)
+              }, 4000)
               setNewContact({name: '', number : ''})
             })
+
+          }
 
             
 
@@ -65,13 +82,40 @@ const App = () => {
             if(window.confirm(`This phonenumber is already in the phonebook under the name ${oldName.name}, do you want to change the name attached to this number to ${newContact.name}`)) {
               services
                 .update(newContact, oldPerson.id)
-                  .then(() => {setNewContact({name: '', number : ''})})
+                  .then((response) => {
+                    setPersons((list) => list.map((object) => object.id === response.id ? response : object ))
+                    setNewContact({name: '', number : ''})
+                    setAlert(`Information updated successfully.`)
+                    setTimeout(() => {
+                      setAlert(null)
+                    }, 4000)
+                    })
+                    .catch(() => {
+                      setError(`Information of ${newContact.name} has already been removed from the server.`)
+                      setTimeout(() => {
+                        setError(null)
+                      }, 4000)
+                    })
             }
         } else if (typeof(resultName) !== 'undefined' && typeof(resultNumber) === 'undefined') {
             if(window.confirm(`${newContact.name} is already added to phonebook with a different number, replace the old number with a new one?`)){
               services
               .update(newContact, oldPerson.id)
-                .then(() => {setNewContact({name: '', number : ''})})
+                .then((response) => {
+                  setPersons((list) => list.map((object) => object.id === response.id ? response : object ))
+                  setNewContact({name: '', number : ''})
+                  setAlert(`Information updated successfully.`)
+                  setTimeout(() => {
+                    setAlert(null)
+                  }, 4000)                
+                })
+                  .catch(() => {
+                    setError(`Information of ${newContact.name} has already been removed from the server.`)
+                    setTimeout(() => {
+                      setError(null)
+                    }, 4000)
+                    
+                  })
             }
         } else  {
           alert(`${newContact.name} is alredy added to phonebook.`)
@@ -82,26 +126,28 @@ const App = () => {
 
     }
 
-    const delButton =  (id, name) => {
+    const delButton = (id, name) => {
 
       if(window.confirm(`Delete ${name}?`)){
-        services.del(id)  
+        services
+          .del(id)
+            .then(() => {
+              setAlert(`${name} deleted successfully.`)
+              setTimeout(() => {
+                setAlert(null)
+              }, 4000)
+              setPersons((list) => list.filter((object) => object.id != id))
+            })
+            
         
       }
 
     }
-    const alertTime = 3000
+    
 
-    const alertShow = () => {
-      setShowAlert(true)
-      setTimeout(() => setShowAlert(false),3000)
-    }
-
-
-
+    
 
    
-    
     useEffect(() => {
       services
       .getAll()
@@ -109,15 +155,16 @@ const App = () => {
           setPersons(response)
         })
 
-    }, [delButton, formAddButton])
+    }, [])
 
   return (
     <div>
       <h2>Phonebook</h2>
-      
-      <Filters  persons={persons}
+      {alertMsg !== null && <Alert alertMsg={alertMsg}/>}
+      {errorMsg !== null && <Error errorMsg={errorMsg}/>}
+      <Filters  
                 showWhere={showWhere}
-                setShowWhere={setShowWhere}/>
+                filterInputHandler={filterInputHandler}/>
 
       <h3>Add a new contact</h3>
       <PersonsForm 
@@ -129,7 +176,7 @@ const App = () => {
                       
       />
 
-      {showAlert && <Alert alertName={alertName}/>}
+      
 
       <h3>Numbers</h3>
       <Persons  persons={persons}

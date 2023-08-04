@@ -26,7 +26,7 @@ const Persons = ({persons, showWhere, delButton}) => {
                     <div>
                         <p key={person.name}>{person.name} <b>{person.number}</b></p>
                           
-                        <button onClick={delButton(person.id)}>Delete</button>
+                        <button onClick={() => delButton(person.id)}>Delete</button>
                     
                     </div> )}
             } )}
