@@ -6,29 +6,76 @@ import {useState, useEffect} from 'react'
 const App = () => {
 
   const [listCountries, setCountries] = useState([])
-  const [search, setSearch] = useState('')
+  const [searchCountries, setSearch] = useState('')
+  const [resultList, setResult] = useState([])
+  const [specificCountry, setSpecific] = useState('')
+  const [moreData, setData] = useState({})
 
+  const handleShow = (country) => {
+    setSpecific(country)
+    setResult([country])
+  }
 
+  const handleChange = (e) => {
+      const value = e.target.value
+      setSearch(value)
+      
 
-  useEffect(() => {
-    if(search !== '') {
+  }
+
+  const handleCountrySelect = (country) => {
+    if (resultList.length === 1) {
       services
-      .getCountries(search)
-        .then((response) => {
-          setCountries(response.data)
-          console.log(listCountries)
-        })
+        .getSearchCountry(resultList[0])
+          .then((response) => {
+            setData(response.data)})
+            
+    } else {
+      setSpecific(country);
     }
 
+    console.log(moreData)
+  };
+  
+  useEffect(() => {
+
+    if(resultList.length === 1) {
+      handleCountrySelect(resultList[0])
+    }
+
+  }, [resultList])
+
+  useEffect(() => {
+    setResult((prevList) =>
+      listCountries.filter((str) =>
+        str.toLowerCase().includes(searchCountries.toLowerCase())
+      )
+
+
+    );
+  }, [searchCountries, listCountries]);
+
+  useEffect(() => {
+    
+      services
+      .getAllCountries()
+        .then((response) => {
+          setCountries(response.data.map((x) => {return x.name.common}))
+          
+        })
+          
   }, [])
 
   return (
     <div>
 
-        <p>Find countries: <input/></p>
+        <p>Find countries: <input value={searchCountries}
+                                  onChange={handleChange}
+                                  placeholder='search...'/></p>
 
-        <CountriesList  search={search}
-                        setSearch={setSearch}/>
+        <CountriesList  handleShow={handleShow}
+                        moreData={moreData}
+                        resultList={resultList}/>
 
 
     </div>
