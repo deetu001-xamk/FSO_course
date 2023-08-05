@@ -1,6 +1,7 @@
 import services from './services/countries'
 import CountriesList from './components/CountriesList';
 import {useState, useEffect} from 'react'
+import SingleCountry from './components/SingleCounrty';
 
 
 const App = () => {
@@ -10,6 +11,19 @@ const App = () => {
   const [resultList, setResult] = useState([])
   const [specificCountry, setSpecific] = useState('')
   const [moreData, setData] = useState({})
+  const [weatherData, setWeatherData] = useState(null)
+
+  const api_key = process.env.REACT_APP_API_KEY
+
+  const handleWeatherGet = (city) => {
+
+    services
+      .getWeather(api_key,city)
+        .then((response) => setWeatherData(response))
+          .catch((e) => console.log(e))
+
+
+  }
 
   const handleShow = (country) => {
     setSpecific(country)
@@ -29,9 +43,11 @@ const App = () => {
         .getSearchCountry(resultList[0])
           .then((response) => {
             setData(response.data)})
+      handleWeatherGet(resultList[0])
             
     } else {
-      setSpecific(country);
+      setSpecific('');
+      setData({})
     }
 
     console.log(moreData)
@@ -72,6 +88,11 @@ const App = () => {
         <p>Find countries: <input value={searchCountries}
                                   onChange={handleChange}
                                   placeholder='search...'/></p>
+        <SingleCountry  weatherData={weatherData}
+                        moreData={moreData}
+                        resultList={resultList}
+        
+                        />
 
         <CountriesList  handleShow={handleShow}
                         moreData={moreData}
